@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_9141fbe0_5552_4ad8_bc6d_06acd75818b3_Input_Variables_medicalCategories = Array<"obstetric" | "breast pain" | "dermatology" | "gynaecology">
+
