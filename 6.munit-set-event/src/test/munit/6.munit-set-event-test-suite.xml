@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="6.munit-set-event-test-suite.xml" />
+	<munit:test name="clientValidationInsuccessTestCase" doc:id="62daaafb-2c01-49e2-b287-a91c6283e14c" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name='Set Event - payload with district "PORTO"' doc:id="e7f399a6-e342-4499-905b-15e366ec91e0">
+				<munit:payload value='#[{&#10;	"name": "Harun",&#10;	"email": "harun.ku99@gmail.com",&#10;	"hospital": "KBZ",&#10;	"age": 23,&#10;	"district": "Porto",&#10;	"category": "dermatologija"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to validateLisbonDistrict" doc:id="20aa94bf-a1ed-4c4b-8c33-8b6030eea6ec" name="validateLisbonDistrict"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that - vars.validateClient is FALSE" doc:id="2ac9dfb8-30f7-46d1-b5dc-96ba8b215409" expression="#[vars.validateClient]" is="#[MunitTools::equalTo(false)]" message='"vars.validateClient is FALSE"'/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="clientValidataionSuccessTestCase" doc:id="805d0b11-78c8-4479-a064-f9243f25a4fc" >
+		<munit:execution >
+			<munit:set-event doc:name='Set Event - payload with district "LISBON"' doc:id="8d524ccb-a49d-436d-8bc6-270aa6d08af9">
+				<munit:payload value='#[{&#10;	"name": "Harun",&#10;	"email": "harun.ku99@gmail.com",&#10;	"hospital": "KBZ",&#10;	"age": 23,&#10;	"district": "Lisbon",&#10;	"category": "dermatologija"&#10;}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference" doc:id="38bfbbb2-e6f6-4bdf-a06f-92af26fbbd0e" name="validateLisbonDistrict"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that - vars.validateClient is TRUR" doc:id="8c6dbb7a-8cc3-4a3b-836c-90c39a30f42c" message='"vars.validateClient is FALSE"' expression="#[vars.validateClient]" is="#[MunitTools::equalTo(true)]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="generateClientUUIDInsuccessTestCase" doc:id="e5b0f01f-da5d-47dd-98a8-0537cf79d919" expectedErrorDescription="INVALID CLIENT DATA">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event - vars.validateClient is FALSE" doc:id="c72ac353-e95e-48d9-b3e4-8b0b25b544e6" >
+				<munit:variables >
+					<munit:variable key="validateClient" value="#[false]" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference - generateClientUUID" doc:id="96b4d890-7f7d-44d4-9672-50e1c58e9419" name="generateClientUUID"/>
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Log clientUUID" doc:id="3da1242c-77dd-4b3a-9d46-c6275f1d5137" message="#[vars.clientUUID]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="generateClientUUIDSuccessTestCase" doc:id="90ce30d4-4f95-4a5c-be09-c4055157f908" >
+		<munit:execution >
+			<munit:set-event doc:name="Set Event - vars.validateClient is TRUE" doc:id="edf2bc04-1cf5-43d2-b0bc-4c6933236ae3">
+				<munit:variables >
+					<munit:variable key="validateClient" value="#[true]" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="Flow Reference - generateClientUUID" doc:id="46c690f4-608c-4c3d-a384-a1a2c8b592d6" name="generateClientUUID" />
+		</munit:execution>
+		<munit:validation >
+			<logger level="INFO" doc:name="Log clientUUID" doc:id="1b05d46d-3416-4a2e-bb35-24f2ed3e0652" message="#[vars.clientUUID]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
