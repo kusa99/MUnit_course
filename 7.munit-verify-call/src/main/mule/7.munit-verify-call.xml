@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="getUserNameByID" doc:id="ec742cbf-7ebb-4f40-9690-40d25ced4b06" >
+		<http:listener doc:name="HTTP GET" doc:id="1e29efcf-df4a-41cc-bc73-2e09a44ea691" config-ref="HTTP_Listener_config" path="/client/{userID}" allowedMethods="GET"/>
+		<logger level="INFO" doc:name="Log START" doc:id="7ee906a4-0276-4ae9-8588-757c9915af95" message='#["LOG START"]'/>
+		<set-payload value="#[attributes.uriParams.userID]" doc:name="Set Payload - userID" doc:id="84dfb9af-d67c-42ab-a2a5-5821b0c9578f" />
+		<logger level="INFO" doc:name="Log payload - userId" doc:id="811424ed-3c47-4062-8455-7d35c375e0e4" message='#[%dw 2.0&#10;&#10;output application/json&#10;---&#10;{&#10;	"userID": payload&#10;}]'/>
+		<flow-ref doc:name="Flow Reference - getUserName" doc:id="107b0e6c-4aee-4ee4-bc3b-ec954754af9f" name="getUserName"/>
+		<set-payload value="#[vars.userName]" doc:name="Set Payload - userName" doc:id="7ac163e6-7be4-45d6-9203-9fc72c10908c" />
+		<logger level="INFO" doc:name="Log END" doc:id="efa29869-7e2f-4fc4-8e41-9be6dca446e1" message='#["LOG END"]'/>
+	</flow>
+	<flow name="getUserName" doc:id="67f91067-9c1f-489b-8e33-d02a3c08222e" >
+		<logger level="INFO" doc:name="Log START" doc:id="f79e3d95-c794-4230-a585-b42a384cfaac" message='#["LOG START - getUserName"]'/>
+		<choice doc:name="Choice" doc:id="062c5ef4-b1c2-496a-94dc-2d7a8ce8d68e" >
+			<when expression="#[payload &gt; 1]">
+				<flow-ref doc:name="Flow Reference - sub_Flow1" doc:id="896fe841-ee98-41d9-96f2-64913b835ce1" name="sub_Flow1"/>
+			</when>
+			<otherwise >
+				<flow-ref doc:name="Flow Reference - sub_Flow2" doc:id="90fa67d7-71b8-42c3-b89a-e985f66116d5" name="sub_Flow2"/>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Log END" doc:id="91445129-de0b-4333-88c1-4e0288cd7fa7" message='#["LOG END - getUserName"]'/>
+	</flow>
+	<sub-flow name="sub_Flow1" doc:id="e72d365a-de53-4821-928c-4ff20a5f0090" >
+		<set-variable value='#["Harun Kusic"]' doc:name="Set Variable - userName" doc:id="531aff2d-6355-4093-bbe3-d049acd689ab" variableName="userName"/>
+		<logger level="INFO" doc:name="Log userName" doc:id="e24e805f-5c3c-427c-890a-7a46a4c22379" message='#["Log vars.userName: " ++ vars.userName]'/>
+	</sub-flow>
+	<sub-flow name="sub_Flow2" doc:id="b557ba26-8c34-4a14-a0ee-b5295c29c873" >
+		<set-variable value='#["Admin"]' doc:name="Set Variable - userName" doc:id="089e2d78-39e1-4126-b1f2-f35c68281b32" variableName="userName" />
+		<logger level="INFO" doc:name="Log userName" doc:id="24be082b-edfd-41db-b88d-f97d5ee1a10f" message='#["Log vars.userName: " ++ vars.userName]' />
+	</sub-flow>
+</mule>
